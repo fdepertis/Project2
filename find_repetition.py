@@ -18,13 +18,15 @@ def find_repetition(path):
     m=0
 
     for item in dict:
-        if item not in testListDict:
-           testListDict[item]=1
+        if item  in testListDict:
+            c= dict.index(item)
+            testListDict[item] += 1
+            stri = list.__getitem__(l)+" è un duplicato di "+list.__getitem__(c)
+            duplicate.insert(m, stri)
+            m += 1
+        else :
+            testListDict[item] = 1
 
-        else:
-            testListDict[item]+=1
-            duplicate.insert(m,list.__getitem__(l))
-            m+=1
         l+=1
 
     return duplicate
