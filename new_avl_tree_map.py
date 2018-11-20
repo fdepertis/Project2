@@ -15,6 +15,7 @@ class NewAVLTreeMap(TreeMap):
         return -1 <= node._balance_factor <= 1
 
     def _rebalance(self, p):
+        print("p:",p.element()._value,"left(p):",self.left(p),"right",self.right(p))
         if p._node._balance_factor < 0:
             if self.right(p)._node._balance_factor > 0:
                 self._rotate(self.left(self.right(p)))         #right
@@ -62,24 +63,25 @@ class NewAVLTreeMap(TreeMap):
                self._rebalance_insert(parent)
 
     def _rebalance_delete(self, p):
-        if self.left(p) is None and self.right(p) is None:
+        if not p:
+            return
+        elif not self.left(p) and not self.right(p):
             p._node._balance_factor = 0
-        elif self.left(p) is None:
+        elif not self.left(p):
             p._node._balance_factor -= 1
         else: #self.right(p) is None
             p._node._balance_factor += 1
 
         if not self._isbalanced(p):
             self._rebalance(p)
+            return
 
         if p._node._balance_factor == 0:
            self._rebalance_delete_auxiliary(p, self.parent(p))
 
     def _rebalance_delete_auxiliary(self, p, parent):
         if parent is not None:
-            print("TTTTTTTTT2")
             if p == self.left(parent):
-                print("TTTTTTTT3")
                 parent._node._balance_factor -= 1
             else: #p == self.right(parent)
                 parent._node._balance_factor += 1
@@ -88,23 +90,16 @@ class NewAVLTreeMap(TreeMap):
                 self._rebalance(parent)
                 return
             if parent._node._balance_factor == 0:
-                print("TTTTTTTTTTTTTTTT")
                 self._rebalance_delete_auxiliary(parent, self.parent(parent))
-
-
 
 if __name__ == '__main__':
     a = NewAVLTreeMap()
-    a[9] = 9
-    a[8] = 8
-    a[11] = 11
-    a[7] = 7
-    a[10] = 10
-    a[12] = 12
-    a[13] = 13
+    for i in range(1, 101):
+        a[i] = i
     for i in a.inorder():
         print(i.value(),"|",i._node._balance_factor)
-    del a[7]
     print("--------")
+    for i in range (1, 100):
+        del a[i]
     for i in a.inorder():
         print(i.value(),"|",i._node._balance_factor)
