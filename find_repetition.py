@@ -1,33 +1,30 @@
 from os import listdir
 
 def find_repetition(path):
-    dict=[]
+
+
     k=0
-    list=listdir(path)
+    m=0
+    lista=[]
+    duplicate = []
+    testListDict = {}
 
     for val in listdir(path):
-        file = open(path+val,"r")
-        content = file.read()
-        dict.insert(k,content)
+        file = open(path+val,"rb")
+        c = file.read()
+        lista.insert(k,c)
+        if c  in testListDict:
+            e= lista.index(c)
+            testListDict[c] += 1
+            stri = listdir(path).__getitem__(k)+" e' un duplicato "+listdir(path).__getitem__(e)
+            duplicate.insert(m, stri)
+            m+=1
+        else:
+            testListDict[c]=1
         k+=1
         file.close()
 
-    duplicate =[]
-    testListDict = {}
-    l=0
-    m=0
 
-    for item in dict:
-        if item  in testListDict:
-            c= dict.index(item)
-            testListDict[item] += 1
-            stri = list.__getitem__(l)+" è un duplicato di "+list.__getitem__(c)
-            duplicate.insert(m, stri)
-            m += 1
-        else :
-            testListDict[item] = 1
-
-        l+=1
 
     return duplicate
 
