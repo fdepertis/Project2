@@ -11,183 +11,100 @@ class NewAVLTreeMap(TreeMap):
             self._balance_factor = 0
 
     def _isbalanced(self, p):
-        return -1 <= p._node._balance_factor <= 1
+        node = self._validate(p)
+        return -1 <= node._balance_factor <= 1
 
-    def _recompute_balance_factor(self, x):
-        y = self.parent(x)
-        z = self.parent(y)
+    def _rebalance(self, p):
+        if p._node._balance_factor < 0:
+            if self.right(p)._node._balance_factor > 0:
+                self._rotate(self.left(self.right(p)))         #right
+                """Rotazione effettuata e ora è allineata"""
+                self.right(self.right(p))._node._balance_factor += 1 + max(self.right(p)._node._balance_factor, 0)
+                self.right(p)._node._balance_factor += 1 - min(self.right(self.right(p))._node._balance_factor, 0)
 
-        # Primo caso
-        if x == self.right(y) and y == self.right(z):
-            # x rimane invariato
-            y._node._balance_factor = 0
-            if self.left(y) is None:
-                if self.left(z) is None:
-                    z._node._balance_factor = 0
-                else:
-                    z._node._balance_factor = 1
+                self._rotate(self.right(p))         #left
+                p._node._balance_factor += 1 - min(self.parent(p)._node._balance_factor, 0)
+                self.parent(p)._node._balance_factor += 1 + max(p._node._balance_factor, 0)
             else:
-                if self.left(z) is None:
-                    z._node._balance_factor = -1
-                else:
-                    z._node._balance_factor = 0
+                self._rotate(self.right(p))         #left
+                p._node._balance_factor += 1 - min(self.parent(p)._node._balance_factor, 0)
+                self.parent(p)._node._balance_factor += 1 + max(p._node._balance_factor, 0)
 
-        # Secondo caso
-        elif x == self.left(y) and y == self.left(z):
-            # x rimane invariato
-            y._node._balance_factor = 0
-            if self.right(y) is None:
-                if self.right(z) is None:
-                    z._node._balance_factor = 0
-                else:
-                    z._node._balance_factor = -1
+        elif p._node._balance_factor > 0: #else
+            if self.left(p)._node._balance_factor < 0:
+                self._rotate(self.right(self.left(p)))          #left #right(left(p))
+                """Rotazione effettuata e ora è allineata"""
+                self.left(self.left(p))._node._balance_factor += 1 - min(self.left(p)._node._balance_factor, 0)
+                self.left(p)._node._balance_factor += 1 + max(self.left(self.left(p))._node._balance_factor, 0)
+
+
+                self._rotate(self.left(p))          #right
+                p._node._balance_factor += 1 + max(self.parent(p)._node._balance_factor, 0)
+                self.parent(p)._node._balance_factor += 1 - min(p._node._balance_factor, 0)
+
             else:
-                if self.right(z) is None:
-                    z._node._balance_factor = 1
-                else:
-                    z._node._balance_factor = 0
-
-        # Terzo caso
-        elif x == self.left(y) and y == self.right(z):
-            x._node._balance_factor = 0
-            if self.right(x) is None and self.left(x) is None:
-                y._node._balance_factor = 0
-                z._node._balance_factor = 0
-            elif self.right(x) is None:
-                if self.right(y) is None:
-                    y._node._balance_factor = 0
-                else:
-                    y._node._balance_factor = -1
-                if self.left(z) is None:
-                    z._node._balance_factor = -1
-                else:
-                    z._node._balance_factor = 0
-            else:  # self.left(x) is None:
-                if self.right(y) is None:
-                    y._node._balance_factor = 1
-                else:
-                    y._node._balance_factor = 0
-                if self.left(z) is None:
-                    z._node._balance_factor = 0
-                else:
-                    z._node._balance_factor = 1
-
-        # Quarto caso, cioè se x == self.right(y) and y == self.left(z)
-        else:
-            x._node._balance_factor = 0
-            if self.right(x) is None and self.left(x) is None:
-                y._node._balance_factor = 0
-                z._node._balance_factor = 0
-            elif self.right(x) is None:
-                if self.left(y) is None:
-                    y._node._balance_factor = 1
-                else:
-                    y._node._balance_factor = 0
-                if self.right(z) is None:
-                    z._node._balance_factor = 0
-                else:
-                    z._node._balance_factor = -1
-            else:  # self.left(x) is None:
-                if self.left(y) is None:
-                    y._node._balance_factor = 0
-                else:
-                    y._node._balance_factor = 1
-                if self.right(z) is None:
-                    z._node._balance_factor = -1
-                else:
-                    z._node._balance_factor = 0
+                self._rotate(self.left(p))          #right
+                p._node._balance_factor += 1 + max(self.parent(p)._node._balance_factor, 0)
+                self.parent(p)._node._balance_factor += 1 - min(p._node._balance_factor, 0)
 
     # ---------------------------- override balancing hooks -----------------------
     def _rebalance_insert(self, p):
-        save = None
-        cursor = p
-        while self.parent(cursor) is not None:
-            up_cursor = self.parent(cursor)
-            if cursor == self.left(up_cursor):
-                up_cursor._node._balance_factor += 1
-            else:
-                up_cursor._node._balance_factor -= 1
-
-            if not self._isbalanced(up_cursor):
-                self._recompute_balance_factor(save)
-                self._restructure(save)
-            if up_cursor._node._balance_factor == 0:
-                cursor = self.root()
-            else:
-                save = cursor
-                cursor = self.parent(cursor)
+       if not self._isbalanced(p):
+           self._rebalance(p)
+           return
+       parent = self.parent(p)
+       if parent is not None:
+           if p == self.left(parent):
+               parent._node._balance_factor += 1
+           else:
+               parent._node._balance_factor -= 1
+           if parent._node._balance_factor != 0:
+               self._rebalance_insert(parent)
 
     def _rebalance_delete(self, p):
-        cursor = p
-        if cursor is None:
-            """Se è stata eliminata la radice, non apportare alcuna modifica."""
-            return None
-        else:
-            if self.left(cursor) is None and self.right(cursor) is None:
-                cursor._node._balance_factor = 0
-            elif self.left(cursor) is None:
-                cursor._node._balance_factor += 1
-            else:  # self.right(cursor) is None
-                cursor._node._balance_factor -= 1
+        if self.left(p) is None and self.right(p) is None:
+            p._node._balance_factor = 0
+        elif self.left(p) is None:
+            p._node._balance_factor -= 1
+        else: #self.right(p) is None
+            p._node._balance_factor += 1
 
-            if not self._isbalanced(cursor):
-                if cursor._node._balance_factor < 0:
-                    child = self.right(cursor)
-                    if self.right(child) is None:
-                        save = self.left(child)
-                    else:
-                        save = self.right(child)
-                else:
-                    child = self.left(cursor)
-                    if self.left(child) is None:
-                        save = self.right(child)
-                    else:
-                        save = self.left(child)
-                self._recompute_balance_factor(save)
-                self._restructure(save)
+        if not self._isbalanced(p):
+            self._rebalance(p)
 
-            if cursor._node._balance_factor == 0:
-                return None
+        if p._node._balance_factor == 0:
+           self._rebalance_delete_auxiliary(p, self.parent(p))
 
-            up_cursor = self.parent(cursor)
-            while up_cursor is not None:
-                if cursor == self.left(up_cursor):
-                    up_cursor._node._balance_factor -= 1
-                else:
-                    up_cursor._node._balance_factor += 1
-                if not self._isbalanced(up_cursor):
-                    if cursor._node._balance_factor < 0:
-                        child = self.right(cursor)
-                        if self.right(child) is None:
-                            save = self.left(child)
-                        else:
-                            save = self.right(child)
-                    else:
-                        child = self.left(cursor)
-                        if self.left(child) is None:
-                            save = self.right(child)
-                        else:
-                            save = self.left(child)
-                    self._recompute_balance_factor(save)
-                    self._restructure(save)
-                if not up_cursor._node._balance_factor == 0:
-                    return None
-                else:
-                    cursor = up_cursor
-                    up_cursor = self.parent(up_cursor)
+    def _rebalance_delete_auxiliary(self, p, parent):
+        if parent is not None:
+            print("TTTTTTTTT2")
+            if p == self.left(parent):
+                print("TTTTTTTT3")
+                parent._node._balance_factor -= 1
+            else: #p == self.right(parent)
+                parent._node._balance_factor += 1
+
+            if not self._isbalanced(parent):
+                self._rebalance(parent)
+                return
+            if parent._node._balance_factor == 0:
+                print("TTTTTTTTTTTTTTTT")
+                self._rebalance_delete_auxiliary(parent, self.parent(parent))
+
+
 
 if __name__ == '__main__':
     a = NewAVLTreeMap()
-    for i in range(1, 11):
-        a[i] = i
-
+    a[9] = 9
+    a[8] = 8
+    a[11] = 11
+    a[7] = 7
+    a[10] = 10
+    a[12] = 12
+    a[13] = 13
     for i in a.inorder():
-        print(i.element()._value, "\t", i._node._balance_factor)
-
-    """print("-----------")
-    for i in range(1, 10):
-        print(i)
-        del a[i]
-
+        print(i.value(),"|",i._node._balance_factor)
+    del a[7]
+    print("--------")
     for i in a.inorder():
-        print(i.element()._value, "\t", i._node._balance_factor)"""
+        print(i.value(),"|",i._node._balance_factor)
