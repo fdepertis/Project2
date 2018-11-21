@@ -1,34 +1,30 @@
 from os import listdir
 
+
+
 def find_repetition(path):
 
-
-    k=0
-    m=0
-    lista=[]
-    duplicate = []
-    testListDict = {}
+    dup = []
+    duplicate = {}
+    fileset = set()
 
     for val in listdir(path):
-        file = open(path+val,"rb")
-        c = file.read()
-        lista.insert(k,c)
-        if c  in testListDict:
-            e= lista.index(c)
-            testListDict[c] += 1
-            stri = listdir(path).__getitem__(k)+" e' un duplicato "+listdir(path).__getitem__(e)
-            duplicate.insert(m, stri)
-            m+=1
+        file = open(path+val,"r")
+        c = hash(file.read())
+        if c in fileset:
+            duplicate[c].append(val)
         else:
-            testListDict[c]=1
-        k+=1
+            fileset.add(c)
+            duplicate[c]=[val]
         file.close()
 
+    for val in duplicate.values():
+        if(len(val)>1):
+            dup.append(val)
 
 
-    return duplicate
+    return list(dup)
 
 
 path = "/Users/VALE/Desktop/testi/"
-
 print(find_repetition(path))
