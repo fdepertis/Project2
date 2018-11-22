@@ -11,12 +11,13 @@ def find_repetition(path):
     for val in listdir(path):
         file = open(path+val,"r")
         c = hash(file.read())
+        file.close()
         if c in fileset:
             duplicate[c].append(val)
         else:
             fileset.add(c)
             duplicate[c]=[val]
-        file.close()
+        
 
     for val in duplicate.values():
         if(len(val)>1):
