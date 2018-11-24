@@ -72,7 +72,6 @@ class NewAVLTreeMap(TreeMap):
 
         if parent is not None:
 
-
             if p == self.left(parent):
 
                 parent._node._balance_factor += 1
@@ -117,6 +116,7 @@ class NewAVLTreeMap(TreeMap):
                 p._node._balance_factor = 0
 
         if not self._isbalanced(p):
+            
             self._rebalance(p)
             #print(p.element()._value,"|",p._node._balance_factor,self.parent(p).element()._value,"|",self.parent(p)._node._balance_factor)
             return
