@@ -1,9 +1,4 @@
-#!/usr/bin/env python
-#-*- coding: utf-8 -*-
-
 from os import listdir
-
-
 
 def find_repetition(path):
     dup = []
@@ -27,6 +22,6 @@ def find_repetition(path):
 
     return list(dup)
 
-
-path = "../Progetto2/testi/"
-print(find_repetition(path))
+if __name__ == '__main__':
+    path = "../Progetto2/testi/"
+    print(find_repetition(path))
