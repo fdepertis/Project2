@@ -81,6 +81,7 @@ class Statistics():
         return s
 
 def _mergeSort(alist):
+    """Complessità: O(n*log2(n))"""
     if len(alist) > 1:
         mid = len(alist) // 2
         lefthalf = alist[:mid]
