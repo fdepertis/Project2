@@ -49,7 +49,7 @@ if __name__ == '__main__':
     P="dociao"
     print(circular_substring(P,T))#True
 
-    P="doc ao"
+    P="docao"
     print(circular_substring(P,T))#False
 
 
