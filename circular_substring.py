@@ -1,13 +1,3 @@
-"""
-Diciamo che un pattern P di lunghezza m è una sottostringa circolare di un testo T di
-lunghezza n > m se P e una sottostringa (normal) di T oppure se P è uguale ad una
-concatenazione di un suffisso di T ed un prefisso di T, cioè se esiste un indice 0 <= k < m,
-tale che P = T [n − m + n : n] + T [0 : k].
-Implementare la funzione circular_substring(P, T) che restituisce True se P è una
-sottostringa circolare di T e False altrimenti. La funzione deve avere complessità O(m +
-n).
-"""
-#O(m+n)
 from TdP_collections.text.find_kmp import compute_kmp_fail
 
 def circular_substring(P, T):
@@ -39,17 +29,17 @@ def circular_substring(P, T):
     return False
 
 if __name__ == '__main__':
-    T="ciaomondo"
-    P="ond"
+    T="ciaopierpaolo"
+    P="pier"
     print(circular_substring(P,T))#True
 
-    P="nm"
+    P="pietro"
     print(circular_substring(P,T))#False
 
-    P="dociao"
+    P="paolociao"
     print(circular_substring(P,T))#True
 
-    P="docao"
+    P="paolocisei"
     print(circular_substring(P,T))#False
 
 
