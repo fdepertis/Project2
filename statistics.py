@@ -1,4 +1,3 @@
-#from new_avl_tree_map import NewAVLTreeMap
 from new_avl_tree_map import NewAVLTreeMap
 import json
 
@@ -10,16 +9,18 @@ class Statistics():
             self._total = t
 
     def __init__(self, file_name = None):
+        """Complessità: O(n*log2(n))"""
         self._tree = NewAVLTreeMap()
         self._occurrences = 0
-        self._average = 0
+        self._average = None
         if file_name:
             file = open(file_name)
             dataset = json.load(file)
-            for (k,v) in dataset:
+            for (k, v) in dataset:
                 self.add(k, v)
 
     def add(self, k, v):
+        """Complessità: O(log2(n))"""
         if k in self._tree:
             self._tree[k]._frequency += 1
             self._tree[k]._total += v
@@ -30,7 +31,7 @@ class Statistics():
         if self._occurrences == 1:
             self._average = v
         else:
-            self._average = (self._average * (self._occurrences - 1) + v)/ self._occurrences
+            self._average = (self._average * (self._occurrences - 1) + v) / self._occurrences
 
     def len(self):
         """Complessità: O(1)"""
@@ -65,20 +66,12 @@ class Statistics():
             return cursor.key()
 
     def mostFrequent(self, j):
-        """Complessità: O(n^2)"""
+        """Complessità: O(n*log2(n))"""
         array = list(self._tree.positions())
-        for i in range(len(array)-1):
-            modified = False
-            for k in range(len(array)-i-1):
-                if array[k].value()._frequency < array[k+1].value()._frequency:
-                    array[k], array[k+1] = array[k+1], array[k]
-                    modified = True
-            if not modified:
-                break
+        _mergeSort(array)
         for i in range(j):
             array[i] = array[i].key()
         return array[:j]
-
 
     def __str__(self):
         s = "Key\t\t\tFrequency\tTotal\n"
@@ -86,6 +79,33 @@ class Statistics():
             s += str(e.key()) + "\t" + str(e.value()._frequency) + "\t\t\t" + str(e.value()._total) + "\n"
         s += "Total Occurrences: " + str(self.occurrences()) + "\nAverage: " + str(self.average())
         return s
+
+def _mergeSort(alist):
+    if len(alist) > 1:
+        mid = len(alist) // 2
+        lefthalf = alist[:mid]
+        righthalf = alist[mid:]
+        _mergeSort(lefthalf)
+        _mergeSort(righthalf)
+        i = 0
+        j = 0
+        k = 0
+        while i < len(lefthalf) and j < len(righthalf):
+            if lefthalf[i].value()._frequency > righthalf[j].value()._frequency:
+                alist[k] = lefthalf[i]
+                i += 1
+            else:
+                alist[k] = righthalf[j]
+                j += 1
+            k += 1
+        while i < len(lefthalf):
+            alist[k] = lefthalf[i]
+            i += 1
+            k += 1
+        while j < len(righthalf):
+            alist[k] = righthalf[j]
+            j += 1
+            k += 1
 
 if __name__ == '__main__':
     s = Statistics("dataset.json")

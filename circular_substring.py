@@ -8,14 +8,14 @@ sottostringa circolare di T e False altrimenti. La funzione deve avere complessi
 n).
 """
 #O(m+n)
-from TdP_collections.text.find_kmp import *
+from TdP_collections.text.find_kmp import compute_kmp_fail
 
-def circular_substring(P,T):
+def circular_substring(P, T):
     n, m = len(T), len(P)
-    if m == 0: return False
-    if n < m: return False
+    if m == 0 or n < m:
+        return False
     fail = compute_kmp_fail(P)
-    status = 0
+    status = False
     j = 0
     k = 0
     while j < n:
@@ -27,10 +27,10 @@ def circular_substring(P,T):
             k += 1
             if j == n:
                 j = 0
-                status = 1
+                status = True
                 n=m-k
         elif k > 0:
-            if status == 0:
+            if not status:
                 k = fail[k-1]
             else:
                 break
