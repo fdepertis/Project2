@@ -34,7 +34,11 @@ class NewAVLTreeMap(TreeMap):
                 self._rotate(self.right(p))         #left
                 p._node._balance_factor += 1 - min(self.parent(p)._node._balance_factor, 0)
                 self.parent(p)._node._balance_factor += 1 + max(p._node._balance_factor, 0)
-                #self._rebalance_delete_auxiliary(p,self.parent(p))
+
+                #print(p.element()._value,"|",p._node._balance_factor,self.parent(p).element()._value,"|",self.parent(p)._node._balance_factor)
+                return self.parent(p)
+                #self._rebalance_delete_auxiliary(self.parent(p),self.parent(self.parent(p)))
+
 
         elif p._node._balance_factor > 0: #else
 
@@ -54,11 +58,11 @@ class NewAVLTreeMap(TreeMap):
                 #print(self.left(p).element()._value,"|",self.left(p)._node._balance_factor,p.element()._value,"|",p._node._balance_factor)
                 self._rotate(self.left(p))          #right
 
-                print(p.element()._value,"|",p._node._balance_factor,self.parent(p).element()._value,"|",self.parent(p)._node._balance_factor)
+                #print(p.element()._value,"|",p._node._balance_factor,self.parent(p).element()._value,"|",self.parent(p)._node._balance_factor)
                 p._node._balance_factor += -1 - max(self.parent(p)._node._balance_factor, 0)
                 self.parent(p)._node._balance_factor += -1 + min(p._node._balance_factor, 0)
-                #self._rebalance_delete_auxiliary(p,self.parent(p))
-
+                #print(p.element()._value,"|",p._node._balance_factor,self.parent(p).element()._value,"|",self.parent(p)._node._balance_factor)
+                return self.parent(p)
 
     # ---------------------------- override balancing hooks -----------------------
     def _rebalance_insert(self, p):
@@ -71,6 +75,7 @@ class NewAVLTreeMap(TreeMap):
         parent = self.parent(p)
 
         if parent is not None:
+
 
             if p == self.left(parent):
 
@@ -116,10 +121,12 @@ class NewAVLTreeMap(TreeMap):
                 p._node._balance_factor = 0
 
         if not self._isbalanced(p):
-            
-            self._rebalance(p)
+            update_p=self._rebalance(p)
+            if update_p is not None:
+                p=update_p
+
             #print(p.element()._value,"|",p._node._balance_factor,self.parent(p).element()._value,"|",self.parent(p)._node._balance_factor)
-            return
+
 
         if p._node._balance_factor == 0:
             self._rebalance_delete_auxiliary(p, self.parent(p))
@@ -175,4 +182,21 @@ if __name__ == '__main__':
         for k in a.inorder():
             print(k.value(),"|",k._node._balance_factor)
         print("----------------------------------------------------------")
+
+    for i in range(1, 16):
+        a[i] = i
+    print("------------------------Insert----------------------------")
+    for k in a.inorder():
+        print(k.value(),"|",k._node._balance_factor)
+    print("------------------------Insert----------------------------")
+    for i in range (4, 11):
+        print("------------------------Delete----------------------------")
+        print("Elimino--->",a[i])
+        del a[i]
+        print("----------------------------------------------------------")
+        for k in a.inorder():
+            print(k.value(),"|",k._node._balance_factor)
+        print("----------------------------------------------------------")
+
+
 
