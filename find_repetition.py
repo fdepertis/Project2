@@ -20,7 +20,7 @@ def find_repetition(path):
         if (len(val) > 1):
             dup.append(val)
 
-    return list(dup)
+    return dup
 
 if __name__ == '__main__':
     path = "../Progetto2/testi/"
