@@ -1,5 +1,5 @@
 #from new_avl_tree_map import NewAVLTreeMap
-from TdP_collections.map.avl_tree import AVLTreeMap
+from new_avl_tree_map import NewAVLTreeMap
 import json
 
 class Statistics():
@@ -10,15 +10,14 @@ class Statistics():
             self._total = t
 
     def __init__(self, file_name = None):
-        self._tree = AVLTreeMap()
+        self._tree = NewAVLTreeMap()
         self._occurrences = 0
         self._average = 0
         if file_name:
-            file = open("dataset.json")
+            file = open(file_name)
             dataset = json.load(file)
-            for k in dataset:
-                print(k, dataset[k])
-                self.add(k, dataset[k])
+            for (k,v) in dataset:
+                self.add(k, v)
 
     def add(self, k, v):
         if k in self._tree:
@@ -46,14 +45,15 @@ class Statistics():
         return self._average
 
     def median(self):
+        """Complessità: O(n*log2(n))"""
         return self.percentile(50)
 
     def percentile(self, j = 20):
+        """Complessità: O(n*log2(n))"""
         if not 1 <= j <= 99:
             raise ValueError("Parameter must be between 1 and 99.")
         else:
             n = round(self.occurrences() * (j / 100))
-            print("n =", n)
             cursor = self._tree.first()
             c = 1
             for i in range(n):
@@ -65,6 +65,7 @@ class Statistics():
             return cursor.key()
 
     def mostFrequent(self, j):
+        """Complessità: O(n^2)"""
         array = list(self._tree.positions())
         for i in range(len(array)-1):
             modified = False
@@ -87,24 +88,11 @@ class Statistics():
         return s
 
 if __name__ == '__main__':
-    s = Statistics()
-    s.add("Giuseppe", 20)
-    s.add("Giuseppe", 20)
-    s.add("Giuseppe", 20)
-    s.add("Giuseppe", 20)
-    s.add("Giuseppe", 20)
-    s.add("Andrea  ", 20)
-    s.add("Andrea  ", 20)
-    s.add("Andrea  ", 20)
-    s.add("Andrea  ", 20)
-    s.add("Simone  ", 20)
-    s.add("Simone  ", 20)
-    s.add("Simone  ", 20)
-    s.add("Giovanni", 20)
-    s.add("Giovanni", 20)
-    s.add("Francesco", 20)
+    s = Statistics("dataset.json")
     print(s)
-    print(s.median())
-    print(s.percentile(25))
-    print(s.percentile(75))
-    print(s.mostFrequent(3))
+    print("\nFirst quartile:\t", s.percentile(25))
+    print("Median:\t\t\t", s.median())
+    print("Third quartile:\t", s.percentile(75),"\n")
+    print("3 most frequent keys:")
+    for i in s.mostFrequent(3):
+        print(i)
