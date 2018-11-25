@@ -181,6 +181,3 @@ if __name__ == '__main__':
         for k in a.inorder():
             print(k.value(),"|",k._node._balance_factor)
         print("----------------------------------------------------------")
-
-
-
